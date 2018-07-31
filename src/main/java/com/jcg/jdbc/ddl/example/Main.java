@@ -77,6 +77,7 @@ public class Main {
 
         int counter = 0;
 
+        head:
         for (String name : names) {
             for (String patronymic : names) {
                 for (String surname : surnames) {
@@ -85,10 +86,30 @@ public class Main {
                             + bundleFirst.getString(name) + " "
                             + bundleFirst.getString(patronymic) + " "
                             + bundleLast.getString(surname));
+
+                    for (String patronymicSecond : names) {
+
+                        System.out.println(counter++ + "). "
+                                + bundleFirst.getString(name) + " "
+                                + bundleFirst.getString(patronymicSecond) + " "
+                                + bundleLast.getString(surname));
+
+                        if (counter > 1000000) {
+                            break head;
+                        }
+                    }
+                }
+
+                for (String patronymicSecond : names) {
+                    for (String surname : surnames) {
+
+                        System.out.println(counter++ + "). "
+                                + bundleFirst.getString(name) + " "
+                                + bundleFirst.getString(patronymicSecond) + " "
+                                + bundleLast.getString(surname));
+                    }
                 }
             }
         }
-
-
     }
 }
