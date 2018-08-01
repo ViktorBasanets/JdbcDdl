@@ -1,9 +1,6 @@
 package com.jcg.jdbc.ddl.example;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.*;
 
 public class Main {
@@ -72,80 +69,82 @@ public class Main {
         ResourceBundle bundlePatterns = ResourceBundle.getBundle("patterns", locale);
         ResourceBundle bundleComA = ResourceBundle.getBundle("sql/initComA", locale);
         ResourceBundle bundleComB = ResourceBundle.getBundle("sql/initComB", locale);
-        String query, pattern;
+        String query, name, departmentName, districtName;
         Random age = new Random();
         PreparedStatement statement;
+        ResultSet resultSet;
         int MAX = 500;
 
         for (int i = 0; i < MAX; i++) {
             query = bundleComA.getString("insert.into.staff");
             statement = connection.prepareStatement(query);
-            pattern = bundlePatterns.getString("firstName") + i + " "
+            name = bundlePatterns.getString("firstName") + i + " "
                     + bundlePatterns.getString("familyName") + i + " "
                     + bundlePatterns.getString("lastName") + i;
-            statement.setString(1, pattern);
+            statement.setString(1, name);
             statement.setInt(2, age.nextInt(20) + 30);
             statement.executeUpdate();
             statement.close();
 
             query = bundleComA.getString("insert.into.departments");
             statement = connection.prepareStatement(query);
-            pattern = bundlePatterns.getString("departmentName") + i;
-            statement.setString(1, pattern);
-            pattern = bundlePatterns.getString("districtName") + i;
-            statement.setString(2, pattern);
+            departmentName = bundlePatterns.getString("departmentName") + i;
+            statement.setString(1, departmentName);
+            districtName = bundlePatterns.getString("districtName") + i;
+            statement.setString(2, districtName);
             statement.executeUpdate();
             statement.close();
 
-            
-        }
+            query = bundleComA.getString("select.coma.by.id");
+            statement = connection.prepareStatement(query);
+            statement.setString(1, name);
+            statement.setString(2, departmentName);
+            resultSet = statement.executeQuery();
+//            statement.close();
+            if (resultSet.first()) {
+                query = bundleComA.getString("insert.into.employees");
+                statement = connection.prepareStatement(query);
+                statement.setLong(1, resultSet.getLong(1));
+                statement.setLong(2, resultSet.getLong(2));
+                statement.executeUpdate();
+                statement.close();
+            }
 
+///////////////////////////////////////////////////////////////////////////////////
 
+            query = bundleComB.getString("insert.into.staff");
+            statement = connection.prepareStatement(query);
+            name = bundlePatterns.getString("firstName") + MAX + i + " "
+                    + bundlePatterns.getString("familyName") + MAX + i + " "
+                    + bundlePatterns.getString("lastName") + MAX + i;
+            statement.setString(1, name);
+            statement.setInt(2, age.nextInt(20) + 30);
+            statement.executeUpdate();
+            statement.close();
 
+            query = bundleComB.getString("insert.into.departments");
+            statement = connection.prepareStatement(query);
+            departmentName = bundlePatterns.getString("departmentName") + i;
+            statement.setString(1, departmentName);
+            districtName = bundlePatterns.getString("districtName") + i;
+            statement.setString(2, districtName);
+            statement.executeUpdate();
+            statement.close();
 
-
-/*
-
-        head:
-        for (String name : names) {
-            for (String patronymic : names) {
-                for (String surname : surnames) {
-
-                    fullName = bundleFirst.getString(name) + " "
-                            + bundleFirst.getString(patronymic) + " "
-                            + bundleLast.getString(surname);
-                    statement.setString(1, fullName);
-                    statement.setString(2, Integer.toString(age.nextInt(20) + 30));
-                    statement.executeUpdate();
-
-                    counter++;
-
-                    for (String patronymicSecond : names) {
-
-                        fullName = bundleFirst.getString(name) + " "
-                                + bundleFirst.getString(patronymicSecond) + " "
-                                + bundleLast.getString(surname);
-                        statement.setString(1, fullName);
-                        statement.setString(2, Integer.toString(age.nextInt(20) + 30));
-                        statement.executeUpdate();
-
-                        if (counter++ > 1000000) {
-                            break head;
-                        }
-                    }
-                }
-
-                for (String patronymicSecond : names) {
-                    for (String surname : surnames) {
-
-                        */
-/*To Do*//*
-
-                        counter++;
-                    }
-                }
+            query = bundleComB.getString("select.comb.by.id");
+            statement = connection.prepareStatement(query);
+            statement.setString(1, name);
+            statement.setString(2, departmentName);
+            resultSet = statement.executeQuery();
+//            statement.close();
+            if (resultSet.first()) {
+                query = bundleComB.getString("insert.into.employees");
+                statement = connection.prepareStatement(query);
+                statement.setLong(1, resultSet.getLong(1));
+                statement.setLong(2, resultSet.getLong(2));
+                statement.executeUpdate();
+                statement.close();
             }
         }
-*/
     }
 }
