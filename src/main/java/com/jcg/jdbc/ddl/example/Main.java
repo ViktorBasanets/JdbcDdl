@@ -65,7 +65,7 @@ public class Main {
         }
     }
 
-    public static void fillTablesTestData() {
+    public static void fillTablesTestData() throws SQLException {
 
         Locale locale = new Locale("en", "Us");
 
@@ -75,26 +75,45 @@ public class Main {
         Set<String> names = bundleFirst.keySet();
         Set<String> surnames = bundleLast.keySet();
 
+        ResourceBundle bundleComA = ResourceBundle.getBundle("sql/initComA", locale);
+        String query;
+
+        for (int i = 0; i < 1000000; i++) {
+            query = bundleComA.getString("insert.into.staff");
+        }
+
+
+        PreparedStatement statement = connection.prepareStatement(query);
         int counter = 0;
+        String fullName;
+        Random age = new Random();
+
+
 
         head:
         for (String name : names) {
             for (String patronymic : names) {
                 for (String surname : surnames) {
 
-                    System.out.println(counter++ + "). "
-                            + bundleFirst.getString(name) + " "
+                    fullName = bundleFirst.getString(name) + " "
                             + bundleFirst.getString(patronymic) + " "
-                            + bundleLast.getString(surname));
+                            + bundleLast.getString(surname);
+                    statement.setString(1, fullName);
+                    statement.setString(2, Integer.toString(age.nextInt(20) + 30));
+                    statement.executeUpdate();
+
+                    counter++;
 
                     for (String patronymicSecond : names) {
 
-                        System.out.println(counter++ + "). "
-                                + bundleFirst.getString(name) + " "
+                        fullName = bundleFirst.getString(name) + " "
                                 + bundleFirst.getString(patronymicSecond) + " "
-                                + bundleLast.getString(surname));
+                                + bundleLast.getString(surname);
+                        statement.setString(1, fullName);
+                        statement.setString(2, Integer.toString(age.nextInt(20) + 30));
+                        statement.executeUpdate();
 
-                        if (counter > 1000000) {
+                        if (counter++ > 1000000) {
                             break head;
                         }
                     }
@@ -103,10 +122,8 @@ public class Main {
                 for (String patronymicSecond : names) {
                     for (String surname : surnames) {
 
-                        System.out.println(counter++ + "). "
-                                + bundleFirst.getString(name) + " "
-                                + bundleFirst.getString(patronymicSecond) + " "
-                                + bundleLast.getString(surname));
+                        /*To Do*/
+                        counter++;
                     }
                 }
             }
