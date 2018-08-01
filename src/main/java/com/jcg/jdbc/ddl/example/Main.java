@@ -62,6 +62,28 @@ public class Main {
         }
     }
 
+    private static void fillStaff(ResourceBundle bundleComA, ResourceBundle bundleComB,
+                                  ResourceBundle bundlePatterns, Locale locale, int MAX)
+        throws SQLException {
+
+        String query, name, departmentName, districtName;
+        Random age = new Random();
+        PreparedStatement statement;
+        ResultSet resultSet;
+
+        for (int i = 0; i < MAX; i++) {
+            query = bundleComA.getString("insert.into.staff");
+            statement = connection.prepareStatement(query);
+            name = bundlePatterns.getString("firstName") + i + " "
+                    + bundlePatterns.getString("familyName") + i + " "
+                    + bundlePatterns.getString("lastName") + i;
+            statement.setString(1, name);
+            statement.setInt(2, age.nextInt(20) + 30);
+            statement.executeUpdate();
+            statement.close();
+        }
+    }
+
     public static void fillTablesTestData() throws SQLException {
 
         Locale locale = new Locale("en", "Us");
@@ -69,6 +91,7 @@ public class Main {
         ResourceBundle bundlePatterns = ResourceBundle.getBundle("patterns", locale);
         ResourceBundle bundleComA = ResourceBundle.getBundle("sql/initComA", locale);
         ResourceBundle bundleComB = ResourceBundle.getBundle("sql/initComB", locale);
+
         String query, name, departmentName, districtName;
         Random age = new Random();
         PreparedStatement statement;
@@ -88,9 +111,9 @@ public class Main {
 
             query = bundleComA.getString("insert.into.departments");
             statement = connection.prepareStatement(query);
-            departmentName = bundlePatterns.getString("departmentName") + i;
+            departmentName = bundlePatterns.getString("departmentName") + i % 20;
             statement.setString(1, departmentName);
-            districtName = bundlePatterns.getString("districtName") + i;
+            districtName = bundlePatterns.getString("districtName") + i % 10;
             statement.setString(2, districtName);
             statement.executeUpdate();
             statement.close();
@@ -124,9 +147,9 @@ public class Main {
 
             query = bundleComB.getString("insert.into.departments");
             statement = connection.prepareStatement(query);
-            departmentName = bundlePatterns.getString("departmentName") + i;
+            departmentName = bundlePatterns.getString("departmentName") + i % 25;
             statement.setString(1, departmentName);
-            districtName = bundlePatterns.getString("districtName") + i;
+            districtName = bundlePatterns.getString("districtName") + i % 15 ;
             statement.setString(2, districtName);
             statement.executeUpdate();
             statement.close();
