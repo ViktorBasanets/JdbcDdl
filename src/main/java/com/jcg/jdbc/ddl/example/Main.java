@@ -69,26 +69,42 @@ public class Main {
 
         Locale locale = new Locale("en", "Us");
 
-        ResourceBundle bundleFirst = ResourceBundle.getBundle("raw/firstName", locale);
-        ResourceBundle bundleLast = ResourceBundle.getBundle("raw/lastName", locale);
-
-        Set<String> names = bundleFirst.keySet();
-        Set<String> surnames = bundleLast.keySet();
-
+        ResourceBundle bundlePatterns = ResourceBundle.getBundle("patterns", locale);
         ResourceBundle bundleComA = ResourceBundle.getBundle("sql/initComA", locale);
-        String query;
+        ResourceBundle bundleComB = ResourceBundle.getBundle("sql/initComB", locale);
+        String query, pattern;
+        Random age = new Random();
+        PreparedStatement statement;
+        int MAX = 500;
 
-        for (int i = 0; i < 1000000; i++) {
+        for (int i = 0; i < MAX; i++) {
             query = bundleComA.getString("insert.into.staff");
+            statement = connection.prepareStatement(query);
+            pattern = bundlePatterns.getString("firstName") + i + " "
+                    + bundlePatterns.getString("familyName") + i + " "
+                    + bundlePatterns.getString("lastName") + i;
+            statement.setString(1, pattern);
+            statement.setInt(2, age.nextInt(20) + 30);
+            statement.executeUpdate();
+            statement.close();
+
+            query = bundleComA.getString("insert.into.departments");
+            statement = connection.prepareStatement(query);
+            pattern = bundlePatterns.getString("departmentName") + i;
+            statement.setString(1, pattern);
+            pattern = bundlePatterns.getString("districtName") + i;
+            statement.setString(2, pattern);
+            statement.executeUpdate();
+            statement.close();
+
+            
         }
 
 
-        PreparedStatement statement = connection.prepareStatement(query);
-        int counter = 0;
-        String fullName;
-        Random age = new Random();
 
 
+
+/*
 
         head:
         for (String name : names) {
@@ -122,11 +138,14 @@ public class Main {
                 for (String patronymicSecond : names) {
                     for (String surname : surnames) {
 
-                        /*To Do*/
+                        */
+/*To Do*//*
+
                         counter++;
                     }
                 }
             }
         }
+*/
     }
 }
